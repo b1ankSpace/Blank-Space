@@ -15,6 +15,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
@@ -27,6 +28,8 @@ html {
   scroll-behavior: smooth;
   scrollbar-width: none;
   background-color: #06160f;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 html::-webkit-scrollbar {
@@ -49,14 +52,42 @@ body {
   letter-spacing: 0.01em;
   -webkit-font-smoothing: antialiased;
   -ms-overflow-style: none;
+  -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
+  touch-action: manipulation;
 }
 
 input,
 textarea {
   -webkit-user-select: text;
   user-select: text;
+  -webkit-touch-callout: default;
+}
+
+img,
+svg,
+h1,
+h2,
+h3,
+p,
+li,
+span,
+a,
+button {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+::selection {
+  background: transparent;
+  color: inherit;
+}
+
+::-moz-selection {
+  background: transparent;
+  color: inherit;
 }
 
 img {

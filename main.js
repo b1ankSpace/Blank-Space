@@ -4,6 +4,22 @@ const parallax = document.querySelector("[data-parallax]");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const finePointer = window.matchMedia("(pointer: fine)").matches;
 
+const clearTextSelection = () => {
+  const active = document.activeElement;
+  if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA")) return;
+  const selection = window.getSelection?.();
+  if (selection && selection.rangeCount) selection.removeAllRanges();
+};
+
+document.addEventListener("selectionchange", clearTextSelection);
+document.addEventListener("touchend", () => window.setTimeout(clearTextSelection, 0), { passive: true });
+document.addEventListener("contextmenu", (event) => {
+  const tag = event.target?.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA") return;
+  event.preventDefault();
+});
+clearTextSelection();
+
 document.querySelectorAll('a[href^="#"]').forEach((link) => {
   link.addEventListener("click", (event) => {
     const id = link.getAttribute("href").slice(1);
