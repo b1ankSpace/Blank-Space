@@ -599,13 +599,12 @@ html:not(.js) .crop {
   z-index: 1;
 }
 
-/* A huge outline numeral sitting in the gap between the copy and the scene. */
+/* A huge outline numeral tucked into the card's top-left corner, behind the copy. */
 .svc-ghost {
   position: absolute;
   z-index: 0;
-  left: calc(46% - 80px);
-  top: 50%;
-  transform: translateY(-50%);
+  left: -0.6rem;
+  top: -2.4rem;
   font-family: var(--serif);
   font-size: clamp(13rem, 25vw, 23rem);
   line-height: 0.8;
@@ -2556,10 +2555,8 @@ html:not(.js) .crop {
   }
 
   .svc-ghost {
-    left: auto;
-    right: calc(-0.4rem + 80px);
-    top: -0.8rem;
-    transform: none;
+    left: -0.4rem;
+    top: -1.2rem;
     font-size: 10.5rem;
   }
 
