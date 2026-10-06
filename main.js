@@ -246,10 +246,6 @@ if (svcCards.length) {
       (entries) => {
         entries.forEach((entry) => {
           entry.target.classList.toggle("is-live", entry.isIntersecting);
-          if (entry.isIntersecting && !reduceMotion && !entry.target.dataset.counted) {
-            entry.target.dataset.counted = "1";
-            scramble(entry.target.querySelector(".num"), 150);
-          }
         });
       },
       { threshold: 0.3 }

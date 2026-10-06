@@ -603,7 +603,7 @@ html:not(.js) .crop {
 .svc-ghost {
   position: absolute;
   z-index: 0;
-  left: 36%;
+  left: 46%;
   top: 50%;
   transform: translateY(-50%);
   font-family: var(--serif);
@@ -631,16 +631,9 @@ html:not(.js) .crop {
   border: 1px solid rgba(200, 169, 113, 0.3);
   border-radius: 999px;
   background: rgba(200, 169, 113, 0.05);
-  font-size: 0.74rem;
+  font-size: 0.84rem;
   letter-spacing: 0.02em;
   color: #e2d2b0;
-}
-
-.svc-text .num {
-  display: block;
-  margin-bottom: 1.4rem;
-  padding: 0;
-  font-size: 1rem;
 }
 
 .svc-text h3 {
@@ -652,7 +645,9 @@ html:not(.js) .crop {
 }
 
 .svc-text p {
-  max-width: 30rem;
+  max-width: 32rem;
+  font-size: clamp(1.05rem, 1.35vw, 1.22rem);
+  line-height: 1.55;
 }
 
 .svc-more {
@@ -1045,7 +1040,8 @@ html:not(.js) .crop {
 /* media support: one orbit that keeps every channel moving */
 .orbit {
   position: relative;
-  width: min(80%, 17rem);
+  height: 92%;
+  max-width: 92%;
   aspect-ratio: 1;
 }
 
@@ -1067,11 +1063,11 @@ html:not(.js) .crop {
 
 .orbit-spin i {
   position: absolute;
-  top: -4px;
+  top: -5px;
   left: 50%;
-  width: 8px;
-  height: 8px;
-  margin-left: -4px;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
   border-radius: 50%;
   background: var(--gold-bright);
   box-shadow: 0 0 12px rgba(223, 191, 140, 0.8);
@@ -1096,7 +1092,7 @@ html:not(.js) .crop {
   padding: 0.3em 0.65em;
   border: 1px solid rgba(200, 169, 113, 0.35);
   background: #081a12;
-  font-size: 0.6rem;
+  font-size: clamp(0.62rem, 0.9vw, 0.78rem);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -2554,8 +2550,9 @@ html:not(.js) .crop {
     aspect-ratio: 16 / 9;
   }
 
-  .svc-text .num {
-    margin-bottom: 0.8rem;
+  /* The orbit needs height more than width; it's the last card, so nothing stacks on it. */
+  .svc-scene.scene-support {
+    aspect-ratio: 1 / 0.85;
   }
 
   .svc-ghost {
@@ -2567,7 +2564,7 @@ html:not(.js) .crop {
   }
 
   .svc-tags li {
-    font-size: 0.7rem;
+    font-size: 0.78rem;
   }
 
   .svc-more {
