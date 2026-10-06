@@ -559,7 +559,7 @@ html:not(.js) .crop {
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
   align-items: center;
   gap: 2rem 4vw;
-  min-height: min(26rem, 72vh);
+  min-height: min(23rem, 68vh);
   padding: clamp(1.4rem, 3.4vw, 2.8rem);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -576,6 +576,7 @@ html:not(.js) .crop {
 .svc-card::after {
   content: "";
   position: absolute;
+  z-index: 2;
   inset: 0;
   background: #020806;
   opacity: calc(var(--cover) * 0.55);
@@ -590,6 +591,49 @@ html:not(.js) .crop {
   border-radius: var(--radius);
   outline: 1px solid var(--gold-bright);
   outline-offset: 3px;
+}
+
+.svc-text,
+.svc-scene {
+  position: relative;
+  z-index: 1;
+}
+
+/* A huge outline numeral sitting in the gap between the copy and the scene. */
+.svc-ghost {
+  position: absolute;
+  z-index: 0;
+  left: 36%;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--serif);
+  font-size: clamp(11rem, 21vw, 19rem);
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(200, 169, 113, 0.16);
+  pointer-events: none;
+  user-select: none;
+}
+
+.svc-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  max-width: 32rem;
+  margin: 1.2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.svc-tags li {
+  padding: 0.35rem 0.8rem;
+  border: 1px solid rgba(200, 169, 113, 0.3);
+  border-radius: 999px;
+  background: rgba(200, 169, 113, 0.05);
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+  color: #e2d2b0;
 }
 
 .svc-text .num {
@@ -2512,6 +2556,18 @@ html:not(.js) .crop {
 
   .svc-text .num {
     margin-bottom: 0.8rem;
+  }
+
+  .svc-ghost {
+    left: auto;
+    right: -0.4rem;
+    top: -0.6rem;
+    transform: none;
+    font-size: 8.5rem;
+  }
+
+  .svc-tags li {
+    font-size: 0.7rem;
   }
 
   .svc-more {
