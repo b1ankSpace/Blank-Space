@@ -70,7 +70,7 @@ if (!reduceMotion && !introSeen && loader && loaderMark && heroLogo) {
   Promise.all([logoReady.then(() => sleep(1750)), fontsReady]).then(async () => {
     if (landed) return;
     loader.classList.add("is-assembled");
-    await sleep(850);
+    await sleep(1150);
     land();
   });
 

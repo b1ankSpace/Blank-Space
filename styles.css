@@ -1521,6 +1521,37 @@ html:not(.js) blockquote::before {
   animation: loaderIn 0.85s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
 }
 
+/* "сначала идея" while the letters fly, "потом форма" once the logo has assembled. */
+.loader-tag {
+  display: grid;
+}
+
+.loader-say {
+  grid-area: 1 / 1;
+  transition:
+    opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.loader-say.is-form,
+.loader.is-assembled .loader-say.is-idea {
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(-0.5em);
+}
+
+.loader-say.is-form {
+  transform: translateY(0.5em);
+}
+
+.loader.is-assembled .loader-say.is-form {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  transition-delay: 0.15s;
+}
+
 .loader.is-landing .loader-tag {
   animation: tagOut 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
@@ -1554,7 +1585,7 @@ html:not(.js) blockquote::before {
   transform: scale(1);
 }
 
-.loader-tag span {
+.loader-say {
   white-space: nowrap;
 }
 
@@ -1816,8 +1847,6 @@ html:not(.js) blockquote::before {
   }
 
   .loader-tag {
-    display: grid;
-    gap: 0.1rem;
     margin-top: 0;
     font-size: clamp(1.25rem, 6vw, 1.7rem);
     letter-spacing: -0.01em;
