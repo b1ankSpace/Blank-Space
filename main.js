@@ -237,6 +237,58 @@ if (parallax && !reduceMotion) {
   onScroll();
 }
 
+/* ——— services deck: cards stack up, scenes play only while on screen ——— */
+const svcCards = [...document.querySelectorAll(".svc")];
+
+if (svcCards.length) {
+  if ("IntersectionObserver" in window) {
+    const liveIo = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          entry.target.classList.toggle("is-live", entry.isIntersecting);
+          if (entry.isIntersecting && !reduceMotion && !entry.target.dataset.counted) {
+            entry.target.dataset.counted = "1";
+            scramble(entry.target.querySelector(".num"), 150);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+    svcCards.forEach((card) => liveIo.observe(card));
+  } else {
+    svcCards.forEach((card) => card.classList.add("is-live"));
+  }
+
+  if (!reduceMotion) {
+    let pending = false;
+    // How far the next card has slid over this one, 0..1; drives the shrink and dim.
+    const stackCards = () => {
+      pending = false;
+      svcCards.forEach((card, i) => {
+        const next = svcCards[i + 1];
+        let cover = 0;
+        if (next) {
+          const a = card.getBoundingClientRect();
+          const b = next.getBoundingClientRect();
+          cover = Math.min(Math.max((a.bottom - b.top) / a.height, 0), 1);
+        }
+        card.style.setProperty("--cover", cover.toFixed(3));
+      });
+    };
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (pending) return;
+        pending = true;
+        requestAnimationFrame(stackCards);
+      },
+      { passive: true }
+    );
+    window.addEventListener("resize", stackCards);
+    stackCards();
+  }
+}
+
 /* ——— studio lede lights up word by word as it scrolls through ——— */
 const lede = document.querySelector("[data-words]");
 
