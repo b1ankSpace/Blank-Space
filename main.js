@@ -237,6 +237,70 @@ if (parallax && !reduceMotion) {
   onScroll();
 }
 
+/* ——— studio lede lights up word by word as it scrolls through ——— */
+const lede = document.querySelector("[data-words]");
+
+if (lede && !reduceMotion) {
+  const words = lede.textContent.trim().split(/\s+/);
+  lede.innerHTML = words.map((word) => `<span class="sw">${word}</span>`).join(" ");
+  const spans = lede.querySelectorAll(".sw");
+  let pending = false;
+
+  const lightWords = () => {
+    pending = false;
+    const rect = lede.getBoundingClientRect();
+    const vh = window.innerHeight;
+    // Starts when the paragraph enters the lower part of the screen, done by the time it reaches the middle.
+    const progress = (vh * 0.85 - rect.top) / (vh * 0.35 + rect.height);
+    const lit = Math.round(Math.min(Math.max(progress, 0), 1) * spans.length);
+    spans.forEach((span, i) => span.classList.toggle("is-lit", i < lit));
+  };
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(lightWords);
+    },
+    { passive: true }
+  );
+  window.addEventListener("resize", lightWords);
+  lightWords();
+}
+
+/* ——— facts count up once they appear ——— */
+const facts = document.querySelector(".facts");
+
+if (facts && !reduceMotion && "IntersectionObserver" in window) {
+  const countUp = (el) => {
+    const target = Number(el.dataset.count);
+    const start = performance.now();
+    const duration = 1100 + target * 20;
+    const frame = (now) => {
+      const t = Math.min((now - start) / duration, 1);
+      el.textContent = String(Math.round(target * (1 - Math.pow(1 - t, 3))));
+      if (t < 1) requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  };
+
+  // Start from zero so the final number never flashes before the count.
+  facts.querySelectorAll("[data-count]").forEach((el) => {
+    el.textContent = "0";
+  });
+
+  const factsIo = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      facts.querySelectorAll("[data-count]").forEach((el, i) => window.setTimeout(() => countUp(el), 250 + i * 150));
+      factsIo.disconnect();
+    },
+    { threshold: 0.4 }
+  );
+  factsIo.observe(facts);
+}
+
 /* ——— ticker eases down under the pointer ——— */
 const ticker = document.querySelector(".ticker");
 const tickerAnim = ticker?.querySelector(".ticker-track")?.getAnimations?.()[0];
