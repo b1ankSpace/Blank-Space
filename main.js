@@ -273,7 +273,7 @@ if (footGiant) {
     const fillGiant = () => {
       pending = false;
       const remaining = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
-      const span = footGiant.offsetHeight * 2.4;
+      const span = footGiant.offsetHeight * 1.5;
       const fill = 1 - Math.min(Math.max(remaining / span, 0), 1);
       footGiant.style.setProperty("--fill", fill.toFixed(3));
     };

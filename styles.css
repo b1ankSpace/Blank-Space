@@ -6,8 +6,7 @@
   --gold-deep: #ad9150;
   --ink: #f2eadc;
   --muted: #9a8660;
-  --serif: "Playfair Display", Didot, "Times New Roman", serif;
-  --display: Didot, "Bodoni 72", "Playfair Display", serif;
+  --serif: "Playfair Display", "Times New Roman", serif;
   --sans: "Manrope", system-ui, sans-serif;
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   --shine: linear-gradient(
@@ -1151,8 +1150,7 @@ html:not(.js) blockquote::before {
 }
 
 .tone-content[data-mode="studio"] .tone-title {
-  font-family: var(--display);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   color: var(--gold);
 }
 
@@ -1611,25 +1609,34 @@ html:not(.js) blockquote::before {
   text-transform: uppercase;
 }
 
-/* Outline wordmark that fills with gold as you reach the end of the page. */
+/* The logo itself as a ghost that fills with real gold as you reach the end of the page. */
 .foot-giant {
   --fill: 1;
+  --w: min(84vw, 44rem);
+  position: relative;
   flex: 1 0 100%;
-  margin: 0 0 0.6rem;
-  padding: 0.12em 0 0.2em;
-  font-family: var(--display);
-  font-size: 16.4vw;
-  line-height: 1;
-  letter-spacing: -0.01em;
-  text-transform: none;
-  text-align: center;
-  white-space: nowrap;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(200, 169, 113, 0.55);
-  background: linear-gradient(180deg, var(--gold-bright), var(--gold-deep)) bottom / 100%
-    calc(var(--fill) * 100%) no-repeat;
-  -webkit-background-clip: text;
-  background-clip: text;
+  height: calc(var(--w) * 490 / 960);
+  margin: 0.4rem 0 1.6rem;
+}
+
+.foot-giant::before,
+.foot-giant::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: var(--w);
+  transform: translateX(-50%);
+  background: url("images/logo-hero.webp") center / 100% 100% no-repeat;
+}
+
+.foot-giant::before {
+  opacity: 0.12;
+}
+
+.foot-giant::after {
+  clip-path: inset(calc((1 - var(--fill)) * 100%) 0 0 0);
 }
 
 .js .foot-giant {
