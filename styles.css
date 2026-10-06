@@ -603,7 +603,7 @@ html:not(.js) .crop {
 .svc-ghost {
   position: absolute;
   z-index: 0;
-  left: calc(46% - 20px);
+  left: calc(46% - 80px);
   top: 50%;
   transform: translateY(-50%);
   font-family: var(--serif);
@@ -2557,7 +2557,7 @@ html:not(.js) .crop {
 
   .svc-ghost {
     left: auto;
-    right: calc(-0.4rem + 20px);
+    right: calc(-0.4rem + 80px);
     top: -0.8rem;
     transform: none;
     font-size: 10.5rem;
