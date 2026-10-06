@@ -39,7 +39,7 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500&family=Playfair+Display:ital@0;1&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=fixes1" />
+    <link rel="stylesheet" href="styles.css?v=motion1" />
   </head>
   <body>
     <div class="loader" data-loader aria-hidden="true">
@@ -82,6 +82,7 @@
               height="490"
               draggable="false"
             />
+            <span class="hero-shine" aria-hidden="true"></span>
           </h1>
           <div class="hero-copy" data-reveal>
             <p>Создаём digital-присутствие бизнеса с нуля.</p>
@@ -306,6 +307,10 @@
                   <span>Пара предложений</span>
                   <textarea name="message" rows="4" data-brief-note placeholder="Например: нужен сайт и ведение Instagram для кофейни"></textarea>
                 </label>
+                <div class="brief-preview" aria-live="polite">
+                  <span class="brief-preview-label">так увидим заявку мы</span>
+                  <pre data-brief-preview></pre>
+                </div>
                 <button type="button" class="btn" data-brief-send>Открыть Telegram</button>
                 <p class="form-ok" data-ok hidden>
                   Текст скопирован. Вставьте в чат, если Telegram открылся пустым.
@@ -317,7 +322,7 @@
       </main>
 
       <footer class="foot">
-        <p class="foot-mark">blank space</p>
+        <p class="foot-giant" aria-hidden="true" data-foot-giant>blank space</p>
         <p>
           <a href="https://t.me/blankspacestudio" target="_blank" rel="noopener">канал</a>
           ·
@@ -342,6 +347,6 @@
       <div class="detail-body" data-detail-body></div>
     </div>
 
-    <script src="main.js?v=fixes1"></script>
+    <script src="main.js?v=motion1"></script>
   </body>
 </html>

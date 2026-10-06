@@ -91,6 +91,45 @@ if (finePointer && !reduceMotion) {
   });
 }
 
+/* ——— headings split into words that rise from under a mask ——— */
+if (!reduceMotion) {
+  document.querySelectorAll("main h2").forEach((h2) => {
+    const words = h2.textContent.trim().split(/\s+/);
+    h2.setAttribute("aria-label", words.join(" "));
+    h2.innerHTML = words
+      .map((word, i) => `<span class="w" aria-hidden="true"><span style="--wi: ${i}">${word}</span></span>`)
+      .join(" ");
+  });
+}
+
+/* ——— gold rules under each section ——— */
+const rules = [...document.querySelectorAll("main > section")].map((section) => {
+  const rule = document.createElement("div");
+  rule.className = "rule";
+  rule.setAttribute("aria-hidden", "true");
+  section.append(rule);
+  return rule;
+});
+
+/* ——— numbers flick through digits like a departure board ——— */
+const scramble = (el, delay) => {
+  if (!el) return;
+  el.dataset.final ??= el.textContent;
+  const final = el.dataset.final;
+  window.setTimeout(() => {
+    let frame = 0;
+    const tick = window.setInterval(() => {
+      frame += 1;
+      if (frame > 10) {
+        window.clearInterval(tick);
+        el.textContent = final;
+        return;
+      }
+      el.textContent = [...final].map((ch, i) => (frame > 6 + i * 2 ? ch : String(Math.floor(Math.random() * 10)))).join("");
+    }, 48);
+  }, delay);
+};
+
 /* ——— reveal + parallax ——— */
 const reveals = document.querySelectorAll("[data-reveal]");
 const serviceItems = document.querySelectorAll(".service-list [data-reveal]");
@@ -114,13 +153,30 @@ if (!reduceMotion && "IntersectionObserver" in window) {
     io.observe(el);
   });
 
+  const ruleIo = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-in");
+        ruleIo.unobserve(entry.target);
+      });
+    },
+    { rootMargin: "0px 0px -6% 0px" }
+  );
+  rules.forEach((rule) => ruleIo.observe(rule));
+
   const observeStagger = (section, items) => {
     if (!section || !items.length) return;
     const sectionIo = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
-          items.forEach((item) => item.classList.add("is-in"));
+          items.forEach((item) => {
+            item.classList.add("is-in");
+            const num = item.querySelector(".num");
+            const delay = parseFloat(getComputedStyle(num).animationDelay) || 0;
+            scramble(num, delay * 1000);
+          });
           sectionIo.unobserve(section);
         });
       },
@@ -133,6 +189,7 @@ if (!reduceMotion && "IntersectionObserver" in window) {
   observeStagger(document.querySelector("#method"), stepItems);
 } else {
   reveals.forEach((el) => el.classList.add("is-in"));
+  rules.forEach((rule) => rule.classList.add("is-in"));
 }
 
 if (parallax && !reduceMotion) {
@@ -144,6 +201,60 @@ if (parallax && !reduceMotion) {
   };
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
+}
+
+/* ——— ticker eases down under the pointer ——— */
+const ticker = document.querySelector(".ticker");
+const tickerAnim = ticker?.querySelector(".ticker-track")?.getAnimations?.()[0];
+
+if (ticker && tickerAnim && finePointer && !reduceMotion) {
+  let rate = 1;
+  let target = 1;
+  let raf = 0;
+
+  const ease = () => {
+    rate += (target - rate) * 0.06;
+    if (Math.abs(target - rate) < 0.005) rate = target;
+    tickerAnim.playbackRate = rate;
+    raf = rate === target ? 0 : requestAnimationFrame(ease);
+  };
+
+  const slowTo = (value) => {
+    target = value;
+    if (!raf) raf = requestAnimationFrame(ease);
+  };
+
+  ticker.addEventListener("pointerenter", () => slowTo(0.18));
+  ticker.addEventListener("pointerleave", () => slowTo(1));
+}
+
+/* ——— footer wordmark fills as the page runs out ——— */
+const footGiant = document.querySelector("[data-foot-giant]");
+
+if (footGiant) {
+  if (reduceMotion) {
+    footGiant.style.setProperty("--fill", "1");
+  } else {
+    let pending = false;
+    const fillGiant = () => {
+      pending = false;
+      const remaining = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
+      const span = footGiant.offsetHeight * 2.4;
+      const fill = 1 - Math.min(Math.max(remaining / span, 0), 1);
+      footGiant.style.setProperty("--fill", fill.toFixed(3));
+    };
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (pending) return;
+        pending = true;
+        requestAnimationFrame(fillGiant);
+      },
+      { passive: true }
+    );
+    window.addEventListener("resize", fillGiant);
+    fillGiant();
+  }
 }
 
 /* ——— tone moodboard ——— */
@@ -184,6 +295,16 @@ let toneToken = 0;
 
 const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
+// Letters land one by one; screen readers get the plain phrase.
+const renderToneTitle = (text) => {
+  let ci = 0;
+  const words = text.split(" ").map(
+    (word) =>
+      `<span class="tw">${[...word].map((ch) => `<span class="ch" style="--ci: ${ci++}">${ch}</span>`).join("")}</span>`
+  );
+  toneTitle.innerHTML = `<span class="sr-only">${text}</span><span aria-hidden="true">${words.join(" ")}</span>`;
+};
+
 const setTone = async (key, { instant = false } = {}) => {
   const tone = tones[key];
   if (!tone || !toneStage || key === currentTone) return;
@@ -211,8 +332,10 @@ const setTone = async (key, { instant = false } = {}) => {
   if (token !== toneToken) return;
 
   toneEyebrow.textContent = tone.eyebrow;
-  toneTitle.textContent = tone.title;
+  if (instant || reduceMotion) toneTitle.textContent = tone.title;
+  else renderToneTitle(tone.title);
   toneCopy.textContent = tone.copy;
+  if (toneContent) toneContent.dataset.mode = key;
 
   if (!instant && !reduceMotion && toneContent) {
     void toneContent.offsetWidth;
@@ -257,6 +380,25 @@ const briefName = document.querySelector("[data-brief-name]");
 const briefNote = document.querySelector("[data-brief-note]");
 const briefOk = document.querySelector("[data-ok]");
 const briefBack = document.querySelector("[data-brief-back]");
+const briefPreview = document.querySelector("[data-brief-preview]");
+
+const briefText = () =>
+  [
+    "Заявка в blank space",
+    `Имя: ${brief.name || "—"}`,
+    `Нужно: ${brief.need || "—"}`,
+    `Срок: ${brief.when || "—"}`,
+    "",
+    brief.note || "Без дополнительного описания",
+  ].join("\n");
+
+const updatePreview = () => {
+  if (!briefPreview) return;
+  brief.note = (briefNote?.value || "").trim();
+  briefPreview.textContent = briefText();
+};
+
+briefNote?.addEventListener("input", updatePreview);
 
 const showBriefStep = (step) => {
   brief.step = step;
@@ -268,6 +410,7 @@ const showBriefStep = (step) => {
   if (briefLabel) briefLabel.textContent = `шаг ${step + 1} из 4`;
   if (briefBar) briefBar.style.width = `${((step + 1) / 4) * 100}%`;
   if (briefBack) briefBack.hidden = step === 0;
+  if (step === 3) updatePreview();
 };
 
 briefBack?.addEventListener("click", () => {
@@ -275,6 +418,12 @@ briefBack?.addEventListener("click", () => {
 });
 
 document.querySelectorAll("[data-brief-opt]").forEach((btn) => {
+  btn.addEventListener("pointerdown", (event) => {
+    const rect = btn.getBoundingClientRect();
+    btn.style.setProperty("--x", `${event.clientX - rect.left}px`);
+    btn.style.setProperty("--y", `${event.clientY - rect.top}px`);
+  });
+
   btn.addEventListener("click", () => {
     const key = btn.dataset.briefOpt;
     const value = btn.dataset.value;
@@ -286,7 +435,7 @@ document.querySelectorAll("[data-brief-opt]").forEach((btn) => {
     window.setTimeout(() => {
       if (key === "need") showBriefStep(1);
       if (key === "when") showBriefStep(2);
-    }, 180);
+    }, reduceMotion ? 180 : 420);
   });
 });
 
@@ -304,14 +453,7 @@ document.querySelector("[data-brief-send]")?.addEventListener("click", async () 
   brief.note = (briefNote?.value || "").trim();
   if (!brief.name) brief.name = (briefName?.value || "").trim();
 
-  const text = [
-    "Заявка в blank space",
-    `Имя: ${brief.name || "—"}`,
-    `Нужно: ${brief.need || "—"}`,
-    `Срок: ${brief.when || "—"}`,
-    "",
-    brief.note || "Без дополнительного описания",
-  ].join("\n");
+  const text = briefText();
 
   // Start the copy and open Telegram in the same tick as the tap:
   // after an await, iOS Safari treats window.open as a blocked popup.
