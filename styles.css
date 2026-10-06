@@ -531,7 +531,7 @@ html:not(.js) .crop {
 }
 
 .service-list,
-.steps {
+.story-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -1140,9 +1140,240 @@ html:not(.js) .crop {
 }
 
 .service-list p,
-.steps p,
 .contact-aside p {
   color: #d8c7a4;
+}
+
+/* ——— method: a scroll story where one figure grows from a dot into the logo ——— */
+.story {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 2rem 5vw;
+  align-items: start;
+}
+
+.story-steps {
+  position: relative;
+  padding-left: 3.6rem;
+}
+
+.story-rail {
+  position: absolute;
+  left: 1.05rem;
+  top: 1rem;
+  bottom: 1rem;
+  width: 1px;
+  background: var(--line);
+}
+
+.story-rail span {
+  position: absolute;
+  inset: 0;
+  background: var(--gold);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.25s linear;
+}
+
+.story-step {
+  position: relative;
+  min-height: 62vh;
+  padding-bottom: 3rem;
+  cursor: pointer;
+  outline: none;
+  transition: opacity 0.5s ease;
+}
+
+.story-step:last-child {
+  min-height: 46vh;
+  padding-bottom: 0;
+}
+
+.js .story-step:not(.is-active) {
+  opacity: 0.32;
+}
+
+.story-step:focus-visible h3 {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.story-num {
+  position: absolute;
+  left: -3.6rem;
+  top: 0.35rem;
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--bg);
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  color: var(--muted);
+  transition:
+    background 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.story-step.is-past .story-num,
+.story-step.is-active .story-num {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.story-step.is-active .story-num {
+  background: var(--gold);
+  color: var(--bg);
+  box-shadow: 0 0 0 6px rgba(200, 169, 113, 0.12);
+}
+
+.story-step h3 {
+  margin: 0 0 0.7rem;
+  font-size: clamp(1.9rem, 3.4vw, 3rem);
+  line-height: 1.1;
+}
+
+.story-step p {
+  max-width: 28rem;
+  font-size: clamp(1.05rem, 1.35vw, 1.2rem);
+  line-height: 1.55;
+  color: #d8c7a4;
+}
+
+.story-step .svc-more {
+  margin-top: 0.6rem;
+}
+
+.story-step:hover .svc-more span {
+  transform: translateX(0.4rem);
+}
+
+.story-stage {
+  position: sticky;
+  top: 14vh;
+  display: grid;
+  justify-items: center;
+  gap: 1.2rem;
+}
+
+.story-figure {
+  width: min(100%, 30rem);
+  aspect-ratio: 1;
+}
+
+.story-figure svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.story-figure circle,
+.story-figure rect {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+
+.story-figure .fig-frame {
+  stroke: rgba(200, 169, 113, 0.3);
+  transition: stroke 0.8s ease;
+}
+
+.story-figure[data-stage="3"] .fig-frame {
+  stroke: var(--gold-deep);
+}
+
+.story-figure .fig-fill,
+.story-figure .fig-grid .is-solid {
+  fill: rgba(200, 169, 113, 0.3);
+}
+
+.story-figure .fig-fill {
+  fill: var(--gold);
+  stroke: none;
+}
+
+.fig-layer {
+  opacity: 0;
+  transform: scale(0.85);
+  transform-box: view-box;
+  transform-origin: 200px 200px;
+  transition:
+    opacity 0.7s ease,
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.story-figure[data-stage="0"] .fig-dot,
+.story-figure[data-stage="1"] .fig-dot,
+.story-figure[data-stage="1"] .fig-waves,
+.story-figure[data-stage="2"] .fig-grid,
+.story-figure[data-stage="3"] .fig-logo {
+  opacity: 1;
+  transform: none;
+}
+
+/* idea: a single point, quietly pulsing */
+.fig-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: figPulse 2.4s ease-out infinite;
+}
+
+@keyframes figPulse {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(4);
+  }
+}
+
+/* voice: ripples spreading out from the point */
+.fig-waves circle {
+  animation: figWave 2.4s ease-in-out calc(var(--i) * 0.4s) infinite;
+}
+
+@keyframes figWave {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+/* production: the ripples settle into a grid of blocks */
+.fig-grid rect {
+  opacity: 0;
+  transform: scale(0.4);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity 0.5s ease calc(var(--i) * 0.06s),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i) * 0.06s);
+}
+
+.story-figure[data-stage="2"] .fig-grid rect {
+  opacity: 1;
+  transform: none;
+}
+
+.story-caption {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 .num {
@@ -1151,220 +1382,6 @@ html:not(.js) .crop {
   color: var(--gold-deep);
   font-size: 1.1rem;
   padding-top: 0.35rem;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .steps li.is-in {
-    cursor: pointer;
-  }
-
-  .steps li.is-in .num,
-  .steps li.is-in h3,
-  .steps li.is-in p {
-    transition:
-      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-      color 0.4s ease;
-  }
-
-  .steps li.is-in::before {
-    transition: background-color 0.45s ease, opacity 0.4s ease;
-  }
-
-  .steps li.is-in:hover .num {
-    color: var(--gold-bright);
-    transform: scale(1.18);
-  }
-
-  .steps li.is-in:hover h3 {
-    color: var(--gold);
-    transform: translateY(-0.35rem);
-  }
-
-  .steps li.is-in:hover p {
-    color: #e4d4b0;
-    transform: translateY(-0.2rem);
-  }
-
-  .steps li.is-in:hover::before {
-    background: var(--gold-bright);
-  }
-}
-
-.steps {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.6rem 1.75rem;
-}
-
-.steps li {
-  position: relative;
-  padding-top: 1.2rem;
-  border-top: 0;
-}
-
-.steps li::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--gold-deep);
-  transform: scaleX(0);
-  transform-origin: center;
-}
-
-.steps li[data-reveal] {
-  opacity: 0;
-  filter: blur(10px);
-  transform: translate3d(0, 2.8rem, 0) scale(0.94);
-  transform-origin: center top;
-  transition: none;
-}
-
-.steps li[data-reveal].is-in {
-  opacity: 1;
-  filter: blur(0);
-  transform: none;
-  animation: stepIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-}
-
-.steps li[data-reveal].is-in::before {
-  transform: scaleX(1);
-  animation: stepLine 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-}
-
-.steps li[data-reveal] .num {
-  opacity: 0;
-  transform: scale(0.7);
-  transform-origin: left center;
-}
-
-.steps li[data-reveal] h3,
-.steps li[data-reveal] p {
-  opacity: 0;
-  transform: translateY(0.85rem);
-}
-
-.steps li[data-reveal].is-in .num {
-  opacity: 1;
-  transform: scale(1);
-  animation: stepNum 0.85s cubic-bezier(0.34, 1.4, 0.64, 1) backwards;
-}
-
-.steps li[data-reveal].is-in h3,
-.steps li[data-reveal].is-in p {
-  opacity: 1;
-  transform: none;
-  animation: stepBit 0.95s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-}
-
-.steps li:nth-child(1)[data-reveal].is-in {
-  animation-delay: 0.08s;
-}
-.steps li:nth-child(1)[data-reveal].is-in::before {
-  animation-delay: 0.2s;
-}
-.steps li:nth-child(1)[data-reveal].is-in .num {
-  animation-delay: 0.28s;
-}
-.steps li:nth-child(1)[data-reveal].is-in h3 {
-  animation-delay: 0.36s;
-}
-.steps li:nth-child(1)[data-reveal].is-in p {
-  animation-delay: 0.46s;
-}
-
-.steps li:nth-child(2)[data-reveal].is-in {
-  animation-delay: 0.26s;
-}
-.steps li:nth-child(2)[data-reveal].is-in::before {
-  animation-delay: 0.38s;
-}
-.steps li:nth-child(2)[data-reveal].is-in .num {
-  animation-delay: 0.46s;
-}
-.steps li:nth-child(2)[data-reveal].is-in h3 {
-  animation-delay: 0.54s;
-}
-.steps li:nth-child(2)[data-reveal].is-in p {
-  animation-delay: 0.64s;
-}
-
-.steps li:nth-child(3)[data-reveal].is-in {
-  animation-delay: 0.44s;
-}
-.steps li:nth-child(3)[data-reveal].is-in::before {
-  animation-delay: 0.56s;
-}
-.steps li:nth-child(3)[data-reveal].is-in .num {
-  animation-delay: 0.64s;
-}
-.steps li:nth-child(3)[data-reveal].is-in h3 {
-  animation-delay: 0.72s;
-}
-.steps li:nth-child(3)[data-reveal].is-in p {
-  animation-delay: 0.82s;
-}
-
-.steps li:nth-child(4)[data-reveal].is-in {
-  animation-delay: 0.62s;
-}
-.steps li:nth-child(4)[data-reveal].is-in::before {
-  animation-delay: 0.74s;
-}
-.steps li:nth-child(4)[data-reveal].is-in .num {
-  animation-delay: 0.82s;
-}
-.steps li:nth-child(4)[data-reveal].is-in h3 {
-  animation-delay: 0.9s;
-}
-.steps li:nth-child(4)[data-reveal].is-in p {
-  animation-delay: 1s;
-}
-
-@keyframes stepIn {
-  from {
-    opacity: 0;
-    filter: blur(10px);
-    transform: translate3d(0, 2.8rem, 0) scale(0.94);
-  }
-  to {
-    opacity: 1;
-    filter: blur(0);
-    transform: none;
-  }
-}
-
-@keyframes stepLine {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes stepNum {
-  from {
-    opacity: 0;
-    transform: scale(0.7);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes stepBit {
-  from {
-    opacity: 0;
-    transform: translateY(0.85rem);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 .foot a:hover {
@@ -2507,8 +2524,7 @@ html:not(.js) .crop {
 
 @media (max-width: 860px) {
   .studio-grid,
-  .contact-grid,
-  .steps {
+  .contact-grid {
     grid-template-columns: 1fr;
   }
 
@@ -2571,6 +2587,66 @@ html:not(.js) .crop {
     margin-top: 0.9rem;
   }
 
+  .story {
+    grid-template-columns: 1fr;
+  }
+
+  /* On phones the figure rides at the top while the steps scroll beneath it. */
+  .story-stage {
+    order: -1;
+    top: 0.6rem;
+    z-index: 3;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    justify-items: start;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: #0b1f16;
+  }
+
+  /* Cover the sliver above the stuck card so text scrolling under it doesn't peek out. */
+  .story-stage::before {
+    content: "";
+    position: absolute;
+    left: -1px;
+    right: -1px;
+    bottom: 100%;
+    height: 0.7rem;
+    background: var(--bg);
+  }
+
+  .story-figure {
+    width: 6.5rem;
+  }
+
+  .story-caption {
+    letter-spacing: 0.3em;
+  }
+
+  .story-steps {
+    padding-left: 3rem;
+  }
+
+  .story-rail {
+    left: 0.9rem;
+  }
+
+  .story-num {
+    left: -3rem;
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+
+  .story-step {
+    min-height: 52vh;
+  }
+
+  .story-step:last-child {
+    min-height: 34vh;
+  }
+
   .contact-how {
     grid-template-columns: 1fr;
     gap: 0;
@@ -2629,17 +2705,10 @@ html:not(.js) .loader {
 }
 
 html:not(.js) [data-reveal],
-html:not(.js) .hero-logo img,
-html:not(.js) .steps li .num,
-html:not(.js) .steps li h3,
-html:not(.js) .steps li p {
+html:not(.js) .hero-logo img {
   opacity: 1;
   filter: none;
   transform: none;
-}
-
-html:not(.js) .steps li::before {
-  transform: scaleX(1);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2667,17 +2736,9 @@ html:not(.js) .steps li::before {
     filter: none;
   }
 
-  .steps li::before,
-  .steps li .num,
-  .steps li h3,
-  .steps li p {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-
   body::after,
   .svc-scene *,
+  .story-figure *,
   .tone-bg::before,
   .tone-bg::after,
   .tone-title .ch,
@@ -2693,6 +2754,11 @@ html:not(.js) .steps li::before {
 
   .rule,
   .crop,
+  .story-step,
+  .story-num,
+  .story-rail span,
+  .fig-layer,
+  .fig-grid rect,
   .studio-lede .sw,
   .brief-dots span,
   .brief-options button::before {

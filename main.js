@@ -145,29 +145,8 @@ const rules = [...document.querySelectorAll("main > section")].map((section) => 
   return rule;
 });
 
-/* ——— numbers flick through digits like a departure board ——— */
-const scramble = (el, delay) => {
-  if (!el) return;
-  el.dataset.final ??= el.textContent;
-  const final = el.dataset.final;
-  window.setTimeout(() => {
-    let frame = 0;
-    const tick = window.setInterval(() => {
-      frame += 1;
-      if (frame > 10) {
-        window.clearInterval(tick);
-        el.textContent = final;
-        return;
-      }
-      el.textContent = [...final].map((ch, i) => (frame > 6 + i * 2 ? ch : String(Math.floor(Math.random() * 10)))).join("");
-    }, 48);
-  }, delay);
-};
-
 /* ——— reveal + parallax ——— */
 const reveals = document.querySelectorAll("[data-reveal]");
-const serviceItems = document.querySelectorAll(".service-list [data-reveal]");
-const stepItems = document.querySelectorAll(".steps [data-reveal]");
 
 if (!reduceMotion && "IntersectionObserver" in window) {
   const io = new IntersectionObserver(
@@ -182,10 +161,7 @@ if (!reduceMotion && "IntersectionObserver" in window) {
     { threshold: 0.16, rootMargin: "0px 0px -8% 0px" }
   );
 
-  reveals.forEach((el) => {
-    if (el.closest(".service-list") || el.closest(".steps")) return;
-    io.observe(el);
-  });
+  reveals.forEach((el) => io.observe(el));
 
   const ruleIo = new IntersectionObserver(
     (entries) => {
@@ -198,29 +174,6 @@ if (!reduceMotion && "IntersectionObserver" in window) {
     { rootMargin: "0px 0px -6% 0px" }
   );
   rules.forEach((rule) => ruleIo.observe(rule));
-
-  const observeStagger = (section, items) => {
-    if (!section || !items.length) return;
-    const sectionIo = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          items.forEach((item) => {
-            item.classList.add("is-in");
-            const num = item.querySelector(".num");
-            const delay = parseFloat(getComputedStyle(num).animationDelay) || 0;
-            scramble(num, delay * 1000);
-          });
-          sectionIo.unobserve(section);
-        });
-      },
-      { threshold: 0.18, rootMargin: "0px 0px -10% 0px" }
-    );
-    sectionIo.observe(section);
-  };
-
-  observeStagger(document.querySelector("#services"), serviceItems);
-  observeStagger(document.querySelector("#method"), stepItems);
 } else {
   reveals.forEach((el) => el.classList.add("is-in"));
   rules.forEach((rule) => rule.classList.add("is-in"));
@@ -283,6 +236,59 @@ if (svcCards.length) {
     window.addEventListener("resize", stackCards);
     stackCards();
   }
+}
+
+/* ——— method story: the active step drives the figure, the rail fills as you go ——— */
+const story = document.querySelector("[data-story]");
+
+if (story) {
+  const storySteps = [...story.querySelectorAll(".story-step")];
+  const storyList = story.querySelector(".story-list");
+  const figure = story.querySelector("[data-figure]");
+  const caption = story.querySelector("[data-story-caption]");
+  const railFill = story.querySelector("[data-rail-fill]");
+  const captions = ["идея", "голос", "система", "форма"];
+  let activeStep = -1;
+
+  const setStep = (index) => {
+    if (index === activeStep) return;
+    activeStep = index;
+    if (figure) figure.dataset.stage = String(index);
+    if (caption) caption.textContent = captions[index];
+    storySteps.forEach((step, i) => {
+      step.classList.toggle("is-active", i === index);
+      step.classList.toggle("is-past", i < index);
+    });
+  };
+
+  let pending = false;
+  const updateStory = () => {
+    pending = false;
+    // On phones the figure sits on top, so the reading line is a little lower.
+    const line = window.innerHeight * (window.innerWidth <= 860 ? 0.62 : 0.5);
+    let index = 0;
+    storySteps.forEach((step, i) => {
+      if (step.getBoundingClientRect().top < line) index = i;
+    });
+    setStep(index);
+    if (railFill && storyList) {
+      const rect = storyList.getBoundingClientRect();
+      const progress = Math.min(Math.max((line - rect.top) / rect.height, 0), 1);
+      railFill.style.transform = `scaleY(${progress.toFixed(3)})`;
+    }
+  };
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(updateStory);
+    },
+    { passive: true }
+  );
+  window.addEventListener("resize", updateStory);
+  updateStory();
 }
 
 /* ——— studio lede lights up word by word as it scrolls through ——— */
