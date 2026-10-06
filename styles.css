@@ -10,6 +10,14 @@
   --display: Didot, "Bodoni 72", "Playfair Display", serif;
   --sans: "Manrope", system-ui, sans-serif;
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --shine: linear-gradient(
+    105deg,
+    transparent 44%,
+    rgba(255, 240, 210, 0.35) 48.5%,
+    rgba(255, 250, 236, 0.7) 50%,
+    rgba(255, 240, 210, 0.35) 51.5%,
+    transparent 56%
+  );
   color-scheme: dark;
 }
 
@@ -179,14 +187,7 @@ main {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(
-    105deg,
-    transparent 44%,
-    rgba(255, 240, 210, 0.35) 48.5%,
-    rgba(255, 250, 236, 0.7) 50%,
-    rgba(255, 240, 210, 0.35) 51.5%,
-    transparent 56%
-  );
+  background: var(--shine);
   background-size: 300% 100%;
   background-position: 120% 0;
   -webkit-mask: url("images/logo-hero.webp") center / 100% 100% no-repeat;
@@ -1385,10 +1386,14 @@ html:not(.js) blockquote::before {
   inset: 0;
   z-index: 10000;
   display: grid;
-  place-content: start center;
+  place-content: center;
   justify-items: center;
-  padding-top: clamp(18vh, 22vh, 26vh);
+  padding: 1.2rem 5vw;
   overflow: hidden;
+  cursor: pointer;
+}
+
+.loader.is-landing {
   pointer-events: none;
 }
 
@@ -1396,7 +1401,11 @@ html:not(.js) blockquote::before {
   position: absolute;
   inset: 0;
   background: #06160f;
-  transition: opacity 2.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.loader.is-landing .loader-veil {
+  opacity: 0;
+  transition: opacity 1.1s cubic-bezier(0.4, 0, 0.2, 1) 0.15s;
 }
 
 .loader-content {
@@ -1404,111 +1413,129 @@ html:not(.js) blockquote::before {
   z-index: 1;
   display: grid;
   justify-items: center;
-  gap: 3.2rem;
+  gap: 2.6rem;
+}
+
+/* The real logo cut into letters: they fly together, then the whole mark glides into the hero. */
+.loader-mark {
+  position: relative;
+  width: min(90vw, 40rem);
+  aspect-ratio: 960 / 490;
+  transform-origin: 0 0;
   transition:
-    opacity 2.35s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 2.35s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 2.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transform 1.05s cubic-bezier(0.65, 0, 0.25, 1),
+    opacity 0.35s ease;
 }
 
-.loader.is-done {
-  pointer-events: none;
-}
-
-.loader.is-done .loader-veil {
+.loader.is-landed .loader-mark {
   opacity: 0;
 }
 
-.loader.is-assembled .loader-tag {
-  animation: none;
-  opacity: 1;
+.loader-piece {
+  position: absolute;
+  background-image: url("images/logo-hero.webp");
+  background-repeat: no-repeat;
+  opacity: 0;
+  filter: blur(10px);
+  transform: translate(var(--lx), var(--ly)) rotate(var(--lr));
+}
+
+.loader.is-go .loader-piece {
+  animation: letterIn 1.05s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i) * 0.07s) both;
+}
+
+.loader-piece.is-tag {
   filter: none;
   transform: none;
 }
 
-.loader.is-burst .loader-tag {
-  animation: none;
-  opacity: 0;
-  filter: blur(12px);
-  transform: translateY(0.7rem);
-  transition:
-    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+.loader.is-go .loader-piece.is-tag {
+  animation: tagIn 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.8s both;
 }
 
-.loader-mark {
-  display: grid;
-  justify-items: start;
-  color: var(--gold);
-  font-family: var(--display);
-  line-height: 0.82;
-  letter-spacing: 0.12em;
-}
-
-.loader-blank,
-.loader-space {
-  font-size: clamp(4.8rem, 18vw, 9.5rem);
-  white-space: nowrap;
-}
-
-.loader-space {
-  display: block;
-}
-
-.loader-pad {
-  visibility: hidden;
-  pointer-events: none;
-  user-select: none;
-}
-
-.loader-letter {
-  display: inline-block;
-  opacity: 0;
-  filter: blur(10px);
-  transform: translate(var(--lx, 0), var(--ly, 0)) rotate(var(--lr, 0deg));
-  animation: letterIn 1.05s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i) * 0.08s) both;
-}
-
-.loader.is-assembled .loader-letter {
+.loader.is-assembled .loader-piece {
   opacity: 1;
-  filter: blur(0);
-  transform: translate(0, 0) rotate(0deg);
+  filter: none;
+  transform: none;
+  clip-path: none;
   animation: none;
-}
-
-.loader.is-burst .loader-letter {
-  animation: letterOut 1.05s cubic-bezier(0.33, 0, 0.2, 1) calc(var(--i) * 0.028s) forwards;
 }
 
 @keyframes letterIn {
   to {
     opacity: 1;
     filter: blur(0);
-    transform: translate(0, 0) rotate(0deg);
+    transform: none;
   }
 }
 
-@keyframes letterOut {
+@keyframes tagIn {
+  from {
+    opacity: 1;
+    clip-path: inset(0 100% 0 0);
+  }
   to {
-    opacity: 0;
-    filter: blur(12px);
-    transform: translate(calc(var(--lx) * 3.2), calc(var(--ly) * 3.2)) rotate(calc(var(--lr) * 2.4));
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.loader-shine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--shine);
+  background-size: 300% 100%;
+  background-position: 120% 0;
+  -webkit-mask: url("images/logo-hero.webp") center / 100% 100% no-repeat;
+  mask: url("images/logo-hero.webp") center / 100% 100% no-repeat;
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+
+.loader.is-assembled .loader-shine {
+  opacity: 1;
+  animation: shineOnce 1.1s cubic-bezier(0.45, 0, 0.25, 1) forwards;
+}
+
+@keyframes shineOnce {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -20% 0;
   }
 }
 
 .loader-tag {
-  margin: 0.6rem 0 0;
+  margin: 0;
   font-family: var(--serif);
   font-style: italic;
-  font-size: clamp(2.1rem, 5.5vw, 3.6rem);
+  font-size: clamp(1.5rem, 3.2vw, 2.4rem);
   font-weight: 400;
   letter-spacing: -0.01em;
   text-transform: none;
   line-height: 1.2;
   color: #d8c7a4;
   text-align: center;
-  animation: loaderIn 0.85s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: loaderIn 0.85s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+}
+
+.loader.is-landing .loader-tag {
+  animation: tagOut 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes tagOut {
+  to {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(0.6rem);
+  }
+}
+
+/* The flying mark lands exactly on the hero logo, so the swap must be instant. */
+.hero-logo.is-landed img {
+  transition: none;
 }
 
 .hero-logo img {
@@ -1784,25 +1811,8 @@ html:not(.js) blockquote::before {
     text-align: center;
   }
 
-  .loader {
-    place-content: center;
-    align-content: center;
-    padding: 1.2rem 5vw;
-  }
-
   .loader-content {
-    gap: 1.5rem;
-    width: min(100%, 22rem);
-  }
-
-  .loader-mark {
-    justify-self: center;
-    letter-spacing: 0.06em;
-  }
-
-  .loader-blank,
-  .loader-space {
-    font-size: clamp(2.9rem, 15.5vw, 4.2rem);
+    gap: 1.6rem;
   }
 
   .loader-tag {
@@ -1884,18 +1894,9 @@ html:not(.js) .steps li::before {
 
   .ticker-track,
   .btn,
-  .loader-mark,
-  .loader-tag,
-  .loader-letter,
   [data-reveal] {
     animation: none;
     transition: none;
-  }
-
-  .loader-letter {
-    opacity: 1;
-    filter: none;
-    transform: none;
   }
 
   .hero-logo img {

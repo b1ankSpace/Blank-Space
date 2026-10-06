@@ -14,24 +14,11 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
 });
 
 /* ——— loader ——— */
-let loaderDone = false;
 const heroLogo = document.querySelector(".hero-logo");
-const loaderLetters = document.querySelectorAll(".loader-letter");
+const loaderMark = loader?.querySelector(".loader-mark");
 
 const revealHero = () => {
   heroLogo?.classList.add("is-ready");
-};
-
-const finishLoader = () => {
-  if (loaderDone || !loader) return;
-  loaderDone = true;
-
-  loader.classList.add("is-assembled");
-  void loader.offsetWidth;
-  loader.classList.add("is-burst");
-  revealHero();
-  window.setTimeout(() => loader.classList.add("is-done"), 100);
-  window.setTimeout(() => loader.remove(), 1900);
 };
 
 const introSeen = document.documentElement.classList.contains("intro-seen");
@@ -39,31 +26,55 @@ try {
   sessionStorage.setItem("bs-intro", "1");
 } catch {}
 
-if (!reduceMotion && !introSeen && loader) {
-  const lastLetter = loaderLetters[loaderLetters.length - 1];
-  let armed = false;
+if (!reduceMotion && !introSeen && loader && loaderMark && heroLogo) {
+  const sleep = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
+  const skipEvents = ["pointerdown", "keydown", "wheel", "touchstart"];
+  let landed = false;
 
-  const armBurst = () => {
-    if (armed) return;
-    armed = true;
-    window.setTimeout(finishLoader, 120);
+  // Glide the assembled mark onto the hero logo, then swap in the real image underneath.
+  const land = (quick = false) => {
+    if (landed) return;
+    landed = true;
+    skipEvents.forEach((type) => window.removeEventListener(type, skip));
+
+    loader.classList.add("is-assembled");
+    const from = loaderMark.getBoundingClientRect();
+    const to = heroLogo.getBoundingClientRect();
+    const duration = quick ? 700 : 1050;
+    loaderMark.style.transitionDuration = `${duration}ms, 350ms`;
+    loaderMark.style.transform = `translate(${to.left - from.left}px, ${to.top - from.top}px) scale(${to.width / from.width})`;
+    loader.classList.add("is-landing");
+
+    window.setTimeout(() => {
+      heroLogo.classList.add("is-landed");
+      revealHero();
+      loader.classList.add("is-landed");
+      window.setTimeout(() => loader.remove(), 400);
+    }, duration);
   };
 
-  if (lastLetter) {
-    lastLetter.addEventListener(
-      "animationend",
-      (event) => {
-        if (event.animationName !== "letterIn") return;
-        armBurst();
-      },
-      { once: true }
-    );
-  }
+  const skip = () => land(true);
+  skipEvents.forEach((type) => window.addEventListener(type, skip, { passive: true }));
 
-  window.addEventListener("load", () => {
-    window.setTimeout(armBurst, 2100);
+  // Start once the logo is decoded, so the letters never fly in as empty boxes.
+  const logoReady = new Promise((resolve) => {
+    const img = new Image();
+    img.src = "images/logo-hero.webp";
+    (img.decode ? img.decode() : Promise.reject()).then(resolve, resolve);
+    window.setTimeout(resolve, 1200);
   });
-  window.setTimeout(armBurst, 3200);
+  const fontsReady = Promise.race([document.fonts?.ready ?? Promise.resolve(), sleep(1500)]);
+
+  logoReady.then(() => loader.classList.add("is-go"));
+
+  Promise.all([logoReady.then(() => sleep(1750)), fontsReady]).then(async () => {
+    if (landed) return;
+    loader.classList.add("is-assembled");
+    await sleep(850);
+    land();
+  });
+
+  window.setTimeout(() => land(true), 6000);
 } else {
   if (loader) loader.remove();
   revealHero();
