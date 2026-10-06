@@ -668,6 +668,23 @@ html:not(.js) .crop {
   animation-delay: 1.3s;
 }
 
+.service-list li:nth-child(5)[data-reveal].is-in {
+  animation-delay: 1.22s;
+}
+.service-list li:nth-child(5)[data-reveal].is-in::before,
+.service-list li:nth-child(5)[data-reveal].is-in::after {
+  animation-delay: 1.3s;
+}
+.service-list li:nth-child(5)[data-reveal].is-in .num {
+  animation-delay: 1.4s;
+}
+.service-list li:nth-child(5)[data-reveal].is-in h3 {
+  animation-delay: 1.48s;
+}
+.service-list li:nth-child(5)[data-reveal].is-in p {
+  animation-delay: 1.58s;
+}
+
 @keyframes serviceIn {
   from {
     opacity: 0;
@@ -1514,7 +1531,8 @@ html:not(.js) .crop {
   gap: 0.65rem;
 }
 
-.brief-options button:last-child:nth-child(odd) {
+.brief-options button:last-child:nth-child(odd),
+.brief-options button.is-wide {
   grid-column: 1 / -1;
 }
 
