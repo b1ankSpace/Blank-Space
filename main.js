@@ -65,12 +65,35 @@ if (!reduceMotion && !introSeen && loader && loaderMark && heroLogo) {
   });
   const fontsReady = Promise.race([document.fonts?.ready ?? Promise.resolve(), sleep(1500)]);
 
-  logoReady.then(() => loader.classList.add("is-go"));
+  // Typewriter caption: "сначала идея" while the letters fly, retyped as "потом форма" once they land.
+  const typeEl = loader.querySelector("[data-loader-type]");
+  const type = async (text, step = 60) => {
+    for (const ch of text) {
+      if (landed || !typeEl) return;
+      typeEl.textContent += ch;
+      await sleep(step);
+    }
+  };
+  const erase = async (step = 28) => {
+    while (typeEl?.textContent && !landed) {
+      typeEl.textContent = typeEl.textContent.slice(0, -1);
+      await sleep(step);
+    }
+  };
+
+  logoReady.then(async () => {
+    loader.classList.add("is-go");
+    await sleep(300);
+    type("сначала идея");
+  });
 
   Promise.all([logoReady.then(() => sleep(1750)), fontsReady]).then(async () => {
     if (landed) return;
     loader.classList.add("is-assembled");
-    await sleep(1150);
+    await erase();
+    await sleep(120);
+    await type("потом форма");
+    await sleep(500);
     land();
   });
 

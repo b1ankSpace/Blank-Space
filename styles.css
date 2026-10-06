@@ -1509,47 +1509,45 @@ html:not(.js) blockquote::before {
 
 .loader-tag {
   margin: 0;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: clamp(1.5rem, 3.2vw, 2.4rem);
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  text-transform: none;
-  line-height: 1.2;
+  font-family: var(--sans);
+  font-size: clamp(0.8rem, 1.3vw, 1rem);
+  font-weight: 300;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  line-height: 1.4;
   color: #d8c7a4;
-  text-align: center;
-  animation: loaderIn 0.85s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
 }
 
-/* "сначала идея" while the letters fly, "потом форма" once the logo has assembled. */
+/* Typed caption: a hidden sizer holds the width so the line never shifts while typing. */
 .loader-tag {
   display: grid;
+  justify-items: start;
 }
 
-.loader-say {
+.loader-sizer,
+.loader-type {
   grid-area: 1 / 1;
-  transition:
-    opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.55s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  white-space: nowrap;
 }
 
-.loader-say.is-form,
-.loader.is-assembled .loader-say.is-idea {
-  opacity: 0;
-  filter: blur(8px);
-  transform: translateY(-0.5em);
+.loader-sizer {
+  visibility: hidden;
 }
 
-.loader-say.is-form {
-  transform: translateY(0.5em);
+.loader-caret {
+  display: inline-block;
+  width: 1px;
+  height: 1.05em;
+  margin-left: 0.1em;
+  vertical-align: -0.15em;
+  background: var(--gold);
+  animation: caret 1s steps(1) infinite;
 }
 
-.loader.is-assembled .loader-say.is-form {
-  opacity: 1;
-  filter: none;
-  transform: none;
-  transition-delay: 0.15s;
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
 }
 
 .loader.is-landing .loader-tag {
@@ -1583,23 +1581,6 @@ html:not(.js) blockquote::before {
   opacity: 1;
   filter: blur(0);
   transform: scale(1);
-}
-
-.loader-say {
-  white-space: nowrap;
-}
-
-@keyframes loaderIn {
-  from {
-    opacity: 0;
-    filter: blur(6px);
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    filter: blur(0);
-    transform: none;
-  }
 }
 
 [data-reveal] {
@@ -1847,9 +1828,8 @@ html:not(.js) blockquote::before {
   }
 
   .loader-tag {
-    margin-top: 0;
-    font-size: clamp(1.25rem, 6vw, 1.7rem);
-    letter-spacing: -0.01em;
+    font-size: 0.78rem;
+    letter-spacing: 0.34em;
   }
 
   .brief-options {
