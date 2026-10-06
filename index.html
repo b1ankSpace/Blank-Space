@@ -18,17 +18,28 @@
       property="og:description"
       content="Пространство, в котором идеи обретают форму. Сайты · SMM · контент · фото/видео."
     />
-    <meta property="og:image" content="images/logo.png" />
+    <meta property="og:image" content="https://b1ankspace.github.io/Blank-Space/images/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://b1ankspace.github.io/Blank-Space/" />
     <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="images/logo.png" />
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+    <script>
+      document.documentElement.classList.add("js");
+      try {
+        if (sessionStorage.getItem("bs-intro")) document.documentElement.classList.add("intro-seen");
+      } catch {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" href="images/logo-hero.webp" as="image" />
     <link
-      href="https://fonts.googleapis.com/css2?family=GFS+Didot&family=Outfit:wght@300;400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500&family=Playfair+Display:ital@0;1&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=noyandexbar" />
+    <link rel="stylesheet" href="styles.css?v=fixes1" />
   </head>
   <body>
     <div class="loader" data-loader aria-hidden="true">
@@ -65,7 +76,7 @@
         <section class="hero" id="top">
           <h1 class="hero-logo" data-parallax>
             <img
-              src="images/logo-hero.png"
+              src="images/logo-hero.webp"
               alt="blank space — creative digital studio"
               width="960"
               height="490"
@@ -76,15 +87,15 @@
             <p>Создаём digital-присутствие бизнеса с нуля.</p>
             <div class="hero-actions">
               <a class="btn" href="#contact">Связаться с нами</a>
-              <a class="btn-text" href="#services">Сайты · SMM · контент · фото/видео</a>
+              <a class="btn-text" href="#services">Сайты · SMM · контент · фото/&#8288;видео</a>
             </div>
           </div>
         </section>
 
         <div class="ticker" aria-hidden="true">
           <div class="ticker-track">
-            <span>сайты</span><span>smm</span><span>контент</span><span>фото</span><span>видео</span><span>web</span><span>content</span><span>photo / video</span>
-            <span>сайты</span><span>smm</span><span>контент</span><span>фото</span><span>видео</span><span>web</span><span>content</span><span>photo / video</span>
+            <span>сайты</span><span>smm</span><span>контент</span><span>фото</span><span>видео</span><span>сайты</span><span>smm</span><span>контент</span><span>фото</span><span>видео</span>
+            <span>сайты</span><span>smm</span><span>контент</span><span>фото</span><span>видео</span><span>сайты</span><span>smm</span><span>контент</span><span>фото</span><span>видео</span>
           </div>
         </div>
 
@@ -254,7 +265,10 @@
               <div class="brief-progress" aria-hidden="true">
                 <span data-brief-bar></span>
               </div>
-              <p class="brief-step" data-brief-label>шаг 1 из 4</p>
+              <div class="brief-meta">
+                <p class="brief-step" data-brief-label>шаг 1 из 4</p>
+                <button type="button" class="brief-back" data-brief-back hidden>← назад</button>
+              </div>
 
               <div class="brief-panel is-active" data-brief-panel="0">
                 <h3>Что нужно сделать?</h3>
@@ -322,11 +336,12 @@
       aria-labelledby="detail-title"
       hidden
     >
+      <button type="button" class="detail-close" data-detail-close aria-label="Закрыть">×</button>
       <p class="detail-kicker" data-detail-kicker></p>
       <h3 class="detail-title" id="detail-title" data-detail-title></h3>
       <div class="detail-body" data-detail-body></div>
     </div>
 
-    <script src="main.js?v=noyandexbar"></script>
+    <script src="main.js?v=fixes1"></script>
   </body>
 </html>

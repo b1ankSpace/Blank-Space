@@ -1,24 +1,7 @@
-const page = document.querySelector("[data-page]");
 const loader = document.querySelector("[data-loader]");
 const parallax = document.querySelector("[data-parallax]");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const finePointer = window.matchMedia("(pointer: fine)").matches;
-
-const clearTextSelection = () => {
-  const active = document.activeElement;
-  if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA")) return;
-  const selection = window.getSelection?.();
-  if (selection && selection.rangeCount) selection.removeAllRanges();
-};
-
-document.addEventListener("selectionchange", clearTextSelection);
-document.addEventListener("touchend", () => window.setTimeout(clearTextSelection, 0), { passive: true });
-document.addEventListener("contextmenu", (event) => {
-  const tag = event.target?.tagName;
-  if (tag === "INPUT" || tag === "TEXTAREA") return;
-  event.preventDefault();
-});
-clearTextSelection();
 
 document.querySelectorAll('a[href^="#"]').forEach((link) => {
   link.addEventListener("click", (event) => {
@@ -51,7 +34,12 @@ const finishLoader = () => {
   window.setTimeout(() => loader.remove(), 1900);
 };
 
-if (!reduceMotion && loader) {
+const introSeen = document.documentElement.classList.contains("intro-seen");
+try {
+  sessionStorage.setItem("bs-intro", "1");
+} catch {}
+
+if (!reduceMotion && !introSeen && loader) {
   const lastLetter = loaderLetters[loaderLetters.length - 1];
   let armed = false;
 
@@ -118,7 +106,7 @@ if (!reduceMotion && "IntersectionObserver" in window) {
         }
       });
     },
-    { root: page, threshold: 0.16, rootMargin: "0px 0px -8% 0px" }
+    { threshold: 0.16, rootMargin: "0px 0px -8% 0px" }
   );
 
   reveals.forEach((el) => {
@@ -136,7 +124,7 @@ if (!reduceMotion && "IntersectionObserver" in window) {
           sectionIo.unobserve(section);
         });
       },
-      { root: page, threshold: 0.18, rootMargin: "0px 0px -10% 0px" }
+      { threshold: 0.18, rootMargin: "0px 0px -10% 0px" }
     );
     sectionIo.observe(section);
   };
@@ -149,12 +137,12 @@ if (!reduceMotion && "IntersectionObserver" in window) {
 
 if (parallax && !reduceMotion) {
   const onScroll = () => {
-    const y = page.scrollTop;
+    const y = window.scrollY;
     const shift = Math.min(y * 0.18, 70);
     const scale = 1 - Math.min(y / 2400, 0.08);
     parallax.style.transform = `translate3d(0, ${shift}px, 0) scale(${scale})`;
   };
-  page.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 }
 
@@ -268,6 +256,7 @@ const briefPanels = document.querySelectorAll("[data-brief-panel]");
 const briefName = document.querySelector("[data-brief-name]");
 const briefNote = document.querySelector("[data-brief-note]");
 const briefOk = document.querySelector("[data-ok]");
+const briefBack = document.querySelector("[data-brief-back]");
 
 const showBriefStep = (step) => {
   brief.step = step;
@@ -278,7 +267,12 @@ const showBriefStep = (step) => {
   });
   if (briefLabel) briefLabel.textContent = `шаг ${step + 1} из 4`;
   if (briefBar) briefBar.style.width = `${((step + 1) / 4) * 100}%`;
+  if (briefBack) briefBack.hidden = step === 0;
 };
+
+briefBack?.addEventListener("click", () => {
+  if (brief.step > 0) showBriefStep(brief.step - 1);
+});
 
 document.querySelectorAll("[data-brief-opt]").forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -319,21 +313,23 @@ document.querySelector("[data-brief-send]")?.addEventListener("click", async () 
     brief.note || "Без дополнительного описания",
   ].join("\n");
 
+  // Start the copy and open Telegram in the same tick as the tap:
+  // after an await, iOS Safari treats window.open as a blocked popup.
+  const copied = navigator.clipboard?.writeText(text) ?? Promise.reject();
+  const url = `https://t.me/dmprnk?text=${encodeURIComponent(text)}`;
+  const win = window.open(url, "_blank");
+  if (win) win.opener = null;
+  else window.location.href = url;
+
   try {
-    await navigator.clipboard.writeText(text);
+    await copied;
     if (briefOk) briefOk.hidden = false;
   } catch {
     if (briefOk) {
-      briefOk.textContent = "Сейчас откроется Telegram — вставьте текст вручную.";
+      briefOk.textContent = "Если Telegram открылся пустым — напишите нам @dmprnk.";
       briefOk.hidden = false;
     }
   }
-
-  window.open(
-    `https://t.me/dmprnk?text=${encodeURIComponent(text)}`,
-    "_blank",
-    "noopener"
-  );
 });
 
 showBriefStep(0);
@@ -400,7 +396,7 @@ const detailMap = {
     kicker: "подход · 01",
     title: "Пространство",
     body: [
-      "Начинаем не с макета, а с смысла. Зачем бренд выходит в digital и какое ощущение должен оставить.",
+      "Начинаем не с макета, а со смысла. Зачем бренд выходит в digital и какое ощущение должен оставить.",
       "Слушаем задачу, пока не станет ясно пространство: аудитория, контекст, ограничения, цель.",
     ],
     points: [
@@ -460,8 +456,10 @@ const detailKicker = document.querySelector("[data-detail-kicker]");
 const detailTitle = document.querySelector("[data-detail-title]");
 const detailBody = document.querySelector("[data-detail-body]");
 const detailTriggers = document.querySelectorAll("[data-detail]");
+const detailClose = document.querySelector("[data-detail-close]");
 
 let detailKey = "";
+let detailReturnFocus = null;
 
 const renderDetail = (key) => {
   const data = detailMap[key];
@@ -488,6 +486,7 @@ const openDetail = (key, originEl) => {
   if (!detailCard || !detailVeil || !detailMap[key]) return;
 
   const wasOpen = detailCard.classList.contains("is-on");
+  if (!wasOpen) detailReturnFocus = originEl || document.activeElement;
 
   if (key !== detailKey) {
     renderDetail(key);
@@ -511,6 +510,7 @@ const openDetail = (key, originEl) => {
   detailTriggers.forEach((el) => {
     el.setAttribute("aria-expanded", String(el.dataset.detail === key));
   });
+  detailClose?.focus({ preventScroll: true });
 };
 
 const closeDetail = () => {
@@ -519,6 +519,8 @@ const closeDetail = () => {
   detailCard.classList.remove("is-on");
   detailVeil.classList.remove("is-on");
   detailTriggers.forEach((el) => el.setAttribute("aria-expanded", "false"));
+  detailReturnFocus?.focus({ preventScroll: true });
+  detailReturnFocus = null;
   window.setTimeout(() => {
     if (detailCard.classList.contains("is-on")) return;
     detailCard.hidden = true;
@@ -546,9 +548,14 @@ detailTriggers.forEach((el) => {
 });
 
 detailVeil?.addEventListener("click", closeDetail);
+detailClose?.addEventListener("click", closeDetail);
 
 window.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && detailCard?.classList.contains("is-on")) {
-    closeDetail();
+  if (!detailCard?.classList.contains("is-on")) return;
+  if (event.key === "Escape") closeDetail();
+  // The close button is the only focusable thing in the card, so keep Tab on it.
+  if (event.key === "Tab") {
+    event.preventDefault();
+    detailClose?.focus();
   }
 });

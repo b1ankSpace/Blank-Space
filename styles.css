@@ -6,8 +6,9 @@
   --gold-deep: #ad9150;
   --ink: #f2eadc;
   --muted: #9a8660;
-  --serif: Didot, "Bodoni 72", "GFS Didot", "Times New Roman", serif;
-  --sans: "Outfit", system-ui, sans-serif;
+  --serif: "Playfair Display", Didot, "Times New Roman", serif;
+  --display: Didot, "Bodoni 72", "Playfair Display", serif;
+  --sans: "Manrope", system-ui, sans-serif;
   color-scheme: dark;
 }
 
@@ -16,12 +17,6 @@
 *::after {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
-}
-
-html,
-body {
-  height: 100%;
-  overflow: hidden;
 }
 
 html {
@@ -38,10 +33,9 @@ html::-webkit-scrollbar {
 
 body {
   margin: 0;
-  display: flex;
-  flex-direction: column;
+  min-height: 100vh;
   background-color: #06160f;
-  background-image: url("images/bg.png");
+  background-image: url("images/bg.webp");
   background-repeat: repeat;
   background-size: 1254px auto;
   color: var(--ink);
@@ -52,42 +46,26 @@ body {
   letter-spacing: 0.01em;
   -webkit-font-smoothing: antialiased;
   -ms-overflow-style: none;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
   touch-action: manipulation;
 }
 
-input,
-textarea {
-  -webkit-user-select: text;
-  user-select: text;
-  -webkit-touch-callout: default;
-}
-
-img,
-svg,
-h1,
-h2,
-h3,
-p,
-li,
-span,
-a,
-button {
+/* Tappable and decorative bits shouldn't start a text selection on tap. */
+.loader,
+.ticker,
+.hero-logo,
+button,
+.btn,
+.btn-text,
+[data-detail],
+.tone-stage {
   -webkit-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
 }
 
 ::selection {
-  background: transparent;
-  color: inherit;
-}
-
-::-moz-selection {
-  background: transparent;
-  color: inherit;
+  background: rgba(200, 169, 113, 0.35);
+  color: var(--ink);
 }
 
 img {
@@ -150,18 +128,6 @@ p:last-child {
 
 main {
   position: relative;
-}
-
-.page {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.page::-webkit-scrollbar {
-  display: none;
 }
 
 .hero {
@@ -998,6 +964,30 @@ blockquote {
   transition: width 0.35s ease;
 }
 
+.brief-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.brief-back {
+  padding: 0.3rem 0;
+  border: 0;
+  background: none;
+  color: var(--gold);
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  appearance: none;
+}
+
+.brief-back:hover {
+  color: var(--gold-bright);
+}
+
 .brief-step {
   margin: 0;
   font-size: 0.72rem;
@@ -1135,7 +1125,7 @@ blockquote {
   display: grid;
   justify-items: start;
   color: var(--gold);
-  font-family: var(--serif);
+  font-family: var(--display);
   line-height: 0.82;
   letter-spacing: 0.12em;
 }
@@ -1270,7 +1260,7 @@ blockquote {
 }
 
 .foot-mark {
-  font-family: var(--serif);
+  font-family: var(--display);
   color: var(--gold);
   letter-spacing: 0.04em;
   text-transform: none;
@@ -1352,6 +1342,32 @@ blockquote {
   to {
     --detail-angle: 360deg;
   }
+}
+
+.detail-close {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--gold);
+  font-family: var(--sans);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  appearance: none;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.detail-close:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
 }
 
 .detail-kicker {
@@ -1485,6 +1501,46 @@ blockquote {
     padding-top: 2rem;
     padding-bottom: 2.5rem;
   }
+}
+
+@media (max-width: 520px) {
+  h2 {
+    white-space: normal;
+    text-wrap: balance;
+  }
+}
+
+/* Repeat visits within a session skip the intro. */
+.intro-seen .loader {
+  display: none;
+}
+
+.intro-seen .hero-logo img {
+  transition-delay: 0s;
+}
+
+/* Without JS nothing would ever reveal, so show everything as-is. */
+html:not(.js) .loader {
+  display: none;
+}
+
+html:not(.js) [data-reveal],
+html:not(.js) .hero-logo img,
+html:not(.js) .service-list li .num,
+html:not(.js) .service-list li h3,
+html:not(.js) .service-list li p,
+html:not(.js) .steps li .num,
+html:not(.js) .steps li h3,
+html:not(.js) .steps li p {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+html:not(.js) .service-list li::before,
+html:not(.js) .service-list li:last-child::after,
+html:not(.js) .steps li::before {
+  transform: scaleX(1);
 }
 
 @media (prefers-reduced-motion: reduce) {
