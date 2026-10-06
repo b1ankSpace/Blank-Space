@@ -106,7 +106,7 @@ if (!reduceMotion && !introSeen && loader && loaderMark && heroLogo) {
 /* ——— magnetic buttons ——— */
 if (finePointer && !reduceMotion) {
   const magnets = document.querySelectorAll(
-    ".btn, .btn-text, .tone-btn, .brief-options button, .mail, .channel a, .foot a"
+    ".btn, .btn-text, .tone-btn, .foot a"
   );
 
   magnets.forEach((el) => {
@@ -408,11 +408,11 @@ const brief = {
 };
 
 const briefLabel = document.querySelector("[data-brief-label]");
-const briefBar = document.querySelector("[data-brief-bar]");
+const briefDots = document.querySelectorAll("[data-brief-dot]");
 const briefPanels = document.querySelectorAll("[data-brief-panel]");
 const briefName = document.querySelector("[data-brief-name]");
 const briefNote = document.querySelector("[data-brief-note]");
-const briefOk = document.querySelector("[data-ok]");
+const briefDoneNote = document.querySelector("[data-brief-done-note]");
 const briefBack = document.querySelector("[data-brief-back]");
 const briefPreview = document.querySelector("[data-brief-preview]");
 
@@ -441,11 +441,22 @@ const showBriefStep = (step) => {
     panel.hidden = !active;
     panel.classList.toggle("is-active", active);
   });
-  if (briefLabel) briefLabel.textContent = `шаг ${step + 1} из 4`;
-  if (briefBar) briefBar.style.width = `${((step + 1) / 4) * 100}%`;
-  if (briefBack) briefBack.hidden = step === 0;
+  briefDots.forEach((dot, i) => {
+    dot.classList.toggle("is-done", i < step);
+    dot.classList.toggle("is-current", i === step);
+  });
+  if (briefLabel) briefLabel.textContent = step < 4 ? `шаг ${step + 1} из 4` : "заявка готова";
+  if (briefBack) briefBack.hidden = step === 0 || step === 4;
   if (step === 3) updatePreview();
 };
+
+document.querySelector("[data-brief-restart]")?.addEventListener("click", () => {
+  Object.assign(brief, { need: "", when: "", name: "", note: "" });
+  document.querySelectorAll("[data-brief-opt]").forEach((b) => b.classList.remove("is-picked"));
+  if (briefName) briefName.value = "";
+  if (briefNote) briefNote.value = "";
+  showBriefStep(0);
+});
 
 briefBack?.addEventListener("click", () => {
   if (brief.step > 0) showBriefStep(brief.step - 1);
@@ -497,14 +508,13 @@ document.querySelector("[data-brief-send]")?.addEventListener("click", async () 
   if (win) win.opener = null;
   else window.location.href = url;
 
+  showBriefStep(4);
+
   try {
     await copied;
-    if (briefOk) briefOk.hidden = false;
+    if (briefDoneNote) briefDoneNote.textContent = "Текст заявки ещё и скопирован: если чат открылся пустым, просто вставьте его.";
   } catch {
-    if (briefOk) {
-      briefOk.textContent = "Если Telegram открылся пустым — напишите нам @dmprnk.";
-      briefOk.hidden = false;
-    }
+    if (briefDoneNote) briefDoneNote.textContent = "Если чат открылся пустым — напишите нам @dmprnk.";
   }
 });
 

@@ -39,7 +39,7 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500&family=Playfair+Display&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=fonts2" />
+    <link rel="stylesheet" href="styles.css?v=brief1" />
   </head>
   <body>
     <div class="loader" data-loader aria-hidden="true">
@@ -244,27 +244,41 @@
 
         <section class="contact" id="contact" data-reveal>
           <div class="section-head">
-            <p class="kicker">бриф</p>
-            <h2>Соберём задачу за минуту.</h2>
+            <p class="kicker">связаться</p>
+            <h2>Расскажите о задаче.</h2>
           </div>
+          <ol class="contact-how">
+            <li><span class="num">01</span>Выберите, что нужно</li>
+            <li><span class="num">02</span>Telegram откроется с готовым текстом</li>
+            <li><span class="num">03</span>Ответим в течение суток</li>
+          </ol>
           <div class="contact-grid">
             <div class="contact-aside">
-              <p>
-                Четыре коротких шага — и Telegram открывается уже с текстом
-                заявки. Без карусели менеджеров.
-              </p>
-              <a class="mail" href="https://t.me/dmprnk" target="_blank" rel="noopener">@dmprnk</a>
-              <p class="channel">
-                Канал студии
-                <a href="https://t.me/blankspacestudio" target="_blank" rel="noopener">@blankspacestudio</a>
-              </p>
+              <a class="contact-card" href="https://t.me/dmprnk" target="_blank" rel="noopener">
+                <span class="contact-card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11.2l6.2 2.1L11.4 20l3.1-4.2 5 3.7L21 4Z" /><path d="m9.2 13.3 7.6-5.6" /></svg></span>
+                <span class="contact-card-kicker">написать нам</span>
+                <span class="contact-card-title">@dmprnk</span>
+                <span class="contact-card-note">Основатель студии.</span>
+                <span class="contact-card-cta">Написать в Telegram <span aria-hidden="true">→</span></span>
+              </a>
+              <a class="contact-card" href="https://t.me/blankspacestudio" target="_blank" rel="noopener">
+                <span class="contact-card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="1.5" /><path d="M3.5 9h17M9 9v10.5" /></svg></span>
+                <span class="contact-card-kicker">наш канал</span>
+                <span class="contact-card-title">@blankspacestudio</span>
+                <span class="contact-card-note">Работы и информация о студии.</span>
+                <span class="contact-card-cta">Смотреть канал <span aria-hidden="true">→</span></span>
+              </a>
             </div>
 
             <div class="brief" data-brief>
-              <div class="brief-progress" aria-hidden="true">
-                <span data-brief-bar></span>
-              </div>
+              <p class="brief-shortcut">
+                Нет времени на бриф?
+                <a href="https://t.me/dmprnk" target="_blank" rel="noopener">Просто напишите нам</a>
+              </p>
               <div class="brief-meta">
+                <div class="brief-dots" aria-hidden="true">
+                  <span data-brief-dot></span><span data-brief-dot></span><span data-brief-dot></span><span data-brief-dot></span>
+                </div>
                 <p class="brief-step" data-brief-label>шаг 1 из 4</p>
                 <button type="button" class="brief-back" data-brief-back hidden>← назад</button>
               </div>
@@ -272,21 +286,21 @@
               <div class="brief-panel is-active" data-brief-panel="0">
                 <h3>Что нужно сделать?</h3>
                 <div class="brief-options">
-                  <button type="button" data-brief-opt="need" data-value="Сайт">Сайт</button>
-                  <button type="button" data-brief-opt="need" data-value="SMM">SMM</button>
-                  <button type="button" data-brief-opt="need" data-value="Контент">Контент</button>
-                  <button type="button" data-brief-opt="need" data-value="Фото / видео">Фото / видео</button>
-                  <button type="button" data-brief-opt="need" data-value="Комплекс">Комплекс</button>
+                  <button type="button" data-brief-opt="need" data-value="Сайт"><b>Сайт</b><small>лендинг, визитка, магазин</small></button>
+                  <button type="button" data-brief-opt="need" data-value="SMM"><b>SMM</b><small>ведение соцсетей</small></button>
+                  <button type="button" data-brief-opt="need" data-value="Контент"><b>Контент</b><small>тексты и сценарии</small></button>
+                  <button type="button" data-brief-opt="need" data-value="Фото / видео"><b>Фото / видео</b><small>съёмка под бренд</small></button>
+                  <button type="button" data-brief-opt="need" data-value="Комплекс"><b>Комплекс</b><small>всё в одной системе</small></button>
                 </div>
               </div>
 
               <div class="brief-panel" data-brief-panel="1" hidden>
                 <h3>Когда нужно?</h3>
                 <div class="brief-options">
-                  <button type="button" data-brief-opt="when" data-value="Как можно скорее">Как можно скорее</button>
-                  <button type="button" data-brief-opt="when" data-value="В течение месяца">В течение месяца</button>
-                  <button type="button" data-brief-opt="when" data-value="1–2 месяца">1–2 месяца</button>
-                  <button type="button" data-brief-opt="when" data-value="Пока присматриваюсь">Пока присматриваюсь</button>
+                  <button type="button" data-brief-opt="when" data-value="Как можно скорее"><b>Как можно скорее</b></button>
+                  <button type="button" data-brief-opt="when" data-value="В течение месяца"><b>В течение месяца</b></button>
+                  <button type="button" data-brief-opt="when" data-value="1–2 месяца"><b>1–2 месяца</b></button>
+                  <button type="button" data-brief-opt="when" data-value="Пока присматриваюсь"><b>Пока присматриваюсь</b></button>
                 </div>
               </div>
 
@@ -309,10 +323,18 @@
                   <span class="brief-preview-label">так увидим заявку мы</span>
                   <pre data-brief-preview></pre>
                 </div>
-                <button type="button" class="btn" data-brief-send>Открыть Telegram</button>
-                <p class="form-ok" data-ok hidden>
-                  Текст скопирован. Вставьте в чат, если Telegram открылся пустым.
-                </p>
+                <button type="button" class="btn btn-send" data-brief-send><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11.2l6.2 2.1L11.4 20l3.1-4.2 5 3.7L21 4Z" /><path d="m9.2 13.3 7.6-5.6" /></svg>Отправить в Telegram</button>
+              </div>
+
+              <div class="brief-panel brief-done" data-brief-panel="4" hidden>
+                <p class="brief-done-mark" aria-hidden="true">✓</p>
+                <h3>Готово!</h3>
+                <p>Telegram открылся с вашей заявкой — осталось нажать «Отправить». Ответим в течение суток.</p>
+                <p class="brief-done-note" data-brief-done-note></p>
+                <div class="brief-done-actions">
+                  <a class="btn" href="https://t.me/blankspacestudio" target="_blank" rel="noopener">Пока смотреть канал</a>
+                  <button type="button" class="brief-back" data-brief-restart>заполнить заново</button>
+                </div>
               </div>
             </div>
           </div>
@@ -324,7 +346,7 @@
         <p>
           <a href="https://t.me/blankspacestudio" target="_blank" rel="noopener">канал</a>
           ·
-          <a href="https://t.me/dmprnk" target="_blank" rel="noopener">проекты</a>
+          <a href="https://t.me/dmprnk" target="_blank" rel="noopener">написать</a>
           · 2026
         </p>
       </footer>
@@ -345,6 +367,6 @@
       <div class="detail-body" data-detail-body></div>
     </div>
 
-    <script src="main.js?v=fonts2"></script>
+    <script src="main.js?v=brief1"></script>
   </body>
 </html>
