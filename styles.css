@@ -603,11 +603,11 @@ html:not(.js) .crop {
 .svc-ghost {
   position: absolute;
   z-index: 0;
-  left: 46%;
+  left: calc(46% - 20px);
   top: 50%;
   transform: translateY(-50%);
   font-family: var(--serif);
-  font-size: clamp(11rem, 21vw, 19rem);
+  font-size: clamp(13rem, 25vw, 23rem);
   line-height: 0.8;
   letter-spacing: -0.04em;
   color: transparent;
@@ -2557,10 +2557,10 @@ html:not(.js) .crop {
 
   .svc-ghost {
     left: auto;
-    right: -0.4rem;
-    top: -0.6rem;
+    right: calc(-0.4rem + 20px);
+    top: -0.8rem;
     transform: none;
-    font-size: 8.5rem;
+    font-size: 10.5rem;
   }
 
   .svc-tags li {
