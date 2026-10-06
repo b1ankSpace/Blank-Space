@@ -603,14 +603,14 @@ html:not(.js) .crop {
 .svc-ghost {
   position: absolute;
   z-index: 0;
-  left: -0.6rem;
-  top: -2.4rem;
+  left: clamp(1.4rem, 3.4vw, 2.8rem);
+  top: clamp(0.6rem, 1.4vw, 1.1rem);
   font-family: var(--serif);
-  font-size: clamp(13rem, 25vw, 23rem);
+  font-size: clamp(4.6rem, 7vw, 6.8rem);
   line-height: 0.8;
   letter-spacing: -0.04em;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(200, 169, 113, 0.16);
+  -webkit-text-stroke: 1px rgba(200, 169, 113, 0.5);
   pointer-events: none;
   user-select: none;
 }
@@ -2555,9 +2555,12 @@ html:not(.js) .crop {
   }
 
   .svc-ghost {
-    left: -0.4rem;
-    top: -1.2rem;
-    font-size: 10.5rem;
+    font-size: 4.2rem;
+  }
+
+  /* Leave room above the title so the numeral reads on its own. */
+  .svc-text {
+    padding-top: 3rem;
   }
 
   .svc-tags li {
