@@ -1531,8 +1531,7 @@ html:not(.js) .crop {
   gap: 0.65rem;
 }
 
-.brief-options button:last-child:nth-child(odd),
-.brief-options button.is-wide {
+.brief-options button:last-child:nth-child(odd) {
   grid-column: 1 / -1;
 }
 
@@ -1542,6 +1541,7 @@ html:not(.js) .crop {
   isolation: isolate;
   display: grid;
   gap: 0.2rem;
+  align-content: start;
   justify-items: start;
   text-align: left;
   padding: 0.95rem 1.1rem;
@@ -1586,6 +1586,9 @@ html:not(.js) .crop {
 }
 
 .brief-options b {
+  max-width: 100%;
+  hyphens: auto;
+  overflow-wrap: break-word;
   font-weight: 500;
   font-size: 0.86rem;
   letter-spacing: 0.04em;
